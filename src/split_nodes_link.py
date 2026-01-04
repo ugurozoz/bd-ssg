@@ -5,10 +5,13 @@ def split_nodes_link(old_nodes):
     new_nodes = []
     if len(old_nodes) == 0:
         return []
-    for node in old_nodes:        
+    for node in old_nodes:
+        if node.text_type in [TextType.BOLD, TextType.ITALIC, TextType.CODE, TextType.IMAGE]:
+            new_nodes.append(node)
+            continue        
         matches = extract_markdown_links(node.text)
         if matches == None and node.text != '':
-            new_nodes.append(TextNode(node.text,TextType.TEXT)) 
+            new_nodes.append(TextNode(node.text,node.text_type)) 
             continue
         text = node.text
         for match in matches:

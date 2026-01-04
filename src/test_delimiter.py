@@ -1,6 +1,6 @@
 import unittest
 from src.delimiter import split_nodes_delimiter
-from src.textnode import TextNode, TextType
+from textnode import TextNode, TextType
 
 
 
@@ -22,7 +22,7 @@ class TestHTMLNode(unittest.TestCase):
             TextNode(" word", TextType.TEXT),
         ])
     
-   
+    
     def test_02_multiple_delimiters(self):
         nodes = [TextNode("Here is `code` and more `inline` code", TextType.TEXT)]
         result = split_nodes_delimiter(nodes, "`", TextType.CODE)
@@ -120,7 +120,7 @@ class TestHTMLNode(unittest.TestCase):
             TextNode("bold text", TextType.BOLD),
             TextNode(" example", TextType.TEXT),
         ])
-
+    
     def test_12_italic_single_underscore(self):
         nodes = [TextNode("this is _italic text_ example", TextType.TEXT)]
         result = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
