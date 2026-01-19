@@ -13,11 +13,12 @@ def block_to_block_type(block):
         return BlockType.HEADING
     
     # Check code block
-    if block.startswith("```") and block.endswith("```"):
+    lines = block.split("\n")
+    if len(lines) >= 2 and lines[0].strip() == "```" and lines[-1].strip() == "```":
         return BlockType.CODE
     
     # Check if ALL lines start with "> "
-    if all(line.startswith("> ") for line in non_empty):
+    if all(line.lstrip().startswith(">") for line in non_empty):
         return BlockType.QUOTE
     
     # Check if ALL lines start with "- "

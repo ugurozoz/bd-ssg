@@ -13,7 +13,7 @@ class HTMLNode:
     def props_to_html(self):
         html = ''
         for prop_key in self.props.keys():
-            html += f'{prop_key}="{self.props[prop_key]}" '
+            html += f' {prop_key}="{self.props[prop_key]}"'
         return html
     
     
@@ -23,15 +23,18 @@ class HTMLNode:
     
 
 class LeafNode(HTMLNode):
-    def __init__(self,tag,value,*args, **kwargs):
-        super().__init__(tag,value,*args, **kwargs)
-    
+    def __init__(self, tag, value, props=None):
+        super().__init__(tag, value, None, props)
+
     def to_html(self):
-        if self.value == None:
-            raise ValueError("All leaf nodes must have a value")
-        if self.tag == None:
+        if self.value is None:
+            raise ValueError("invalid HTML: no value")
+        if self.tag is None:
             return self.value
-        return f'<{self.tag}>{self.value}</{self.tag}>'
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
+
+    def __repr__(self):
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
     
     
         
@@ -50,7 +53,7 @@ class ParentNode(HTMLNode):
             raise ValueError('Children dont exist')
         inner_text = self.value if self.value != None else '' 
             
-        result =f'<{self.tag}>{inner_text}'
+        result =f'<{self.tag}{self.props_to_html()}>{inner_text}'
         for child in self.children:
             #print(child)
             result += child.to_html()
@@ -60,22 +63,20 @@ class ParentNode(HTMLNode):
  
  
  
-def text_node_to_html_node(text_node: TextNode):
-    match(text_node.text_type):
-        case TextType.TEXT:
-            return LeafNode(text_node.text)
-        case TextType.BOLD:
-            return LeafNode(text_node.text, "b")
-        case TextType.ITALIC:
-            return LeafNode(text_node.text, "i")
-        case TextType.CODE:
-            return LeafNode(text_node.text, "code")
-        case TextType.LINK:
-            return ParentNode("a", [LeafNode(text_node.text)], {"href": text_node.url})
-        case TextType.IMAGE:
-            return ParentNode("img", [], {"src": text_node.url, "alt": text_node.text})
-
-     
+def text_node_to_html_node(text_node):
+    if text_node.text_type == TextType.TEXT:
+        return LeafNode(None, text_node.text)
+    if text_node.text_type == TextType.BOLD:
+        return LeafNode("b", text_node.text)
+    if text_node.text_type == TextType.ITALIC:
+        return LeafNode("i", text_node.text)
+    if text_node.text_type == TextType.CODE:
+        return LeafNode("code", text_node.text)
+    if text_node.text_type == TextType.LINK:
+        return LeafNode("a", text_node.text, {"href": text_node.url})
+    if text_node.text_type == TextType.IMAGE:
+        return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
+    raise ValueError(f"invalid text type: {text_node.text_type}")
         
         
     
