@@ -5,7 +5,7 @@ from extract_title import extract_title
 from pathlib import Path
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path,basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     md = ''
     template = ''
@@ -19,6 +19,8 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(md)
     result = template.replace("{{ Title }}",title)
     result = result.replace("{{ Content }}", html)
+    result = result.replace('href="/',f'href="{basepath}')
+    result = result.replace('src="/',f'src="{basepath}')
     
     
     dest_dir_path = os.path.dirname(dest_path)
